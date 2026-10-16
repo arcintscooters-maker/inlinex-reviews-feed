@@ -54,13 +54,14 @@ console.log(`products with reviews: ${products.length}`);
 // 2. Loox widget pages
 const gs1ok = b => { if (!/^\d{8}$|^\d{12,14}$/.test(b)) return false; const d = b.split("").map(Number); const chk = d.pop(); let s = 0; d.reverse().forEach((x, i) => s += x * (i % 2 === 0 ? 3 : 1)); return (10 - s % 10) % 10 === chk; };
 const unesc = s => s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").trim();
-const reviews = new Map(); let fetched = 0, failed = 0; const statuses = {};
-async function scrape(p) {
-  let html = "";
-  for (let a = 0; a < 5; a++) { try { const r = await fetch(`https://loox.io/widget/${LOOX_KEY}/reviews/${p.id}`, { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36", "Accept": "text/html" } }); if (r.ok) { html = await r.text(); break; } statuses[r.status] = (statuses[r.status] || 0) + 1; } catch (e) { statuses.err = (statuses.err || 0) + 1; } await new Promise(r => setTimeout(r, 2500 * (a + 1))); }
-  if (!html) { failed++; return; }
-  fetched++;
-  const parts = html.split(/<div data-id="([A-Za-z0-9_-]+)" data-media-type="([a-z]*)" class="grid-item-wrap/);
+const reviews = new Map(); let fetched = 0, failed = 0, cached = 0; const statuses = {};
+// Loox answers 429 generously: one request at a time, ~1.2 s apart, honour Retry-After, and keep the last good copy of every
+// product's reviews in docs/loox-cache.json so a refused fetch reuses yesterday's data instead of dropping the product.
+const CACHE = join(OUT_DIR, "loox-cache.json"); mkdirSync(OUT_DIR, { recursive: true });
+const cache = existsSync(CACHE) ? JSON.parse(readFileSync(CACHE, "utf8")) : {};
+const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
+function parse(html) {
+  const out = []; const parts = html.split(/<div data-id="([A-Za-z0-9_-]+)" data-media-type="([a-z]*)" class="grid-item-wrap/);
   for (let k = 1; k < parts.length - 1; k += 3) {
     const id = parts[k], block = parts[k + 2];
     const name = (block.match(/class="title">([^<]*)/) || [])[1]; const ts = +(block.match(/data-time='(\d+)'/) || [])[1];
@@ -68,13 +69,28 @@ async function scrape(p) {
     const img = (block.match(/<img src="([^"]+)"/) || [])[1]; const verified = /verified-badge-and-text/.test(block);
     const variant = (block.match(/item-type-value">([^<]*)/) || [])[1];
     if (!id || !name || !ts || !(stars >= 1 && stars <= 5)) continue;
-    const r = reviews.get(id) || { id, name: unesc(name), ts, stars, text, img: img ? "https:" + img.replace(/^https?:/, "") : null, verified, variant, products: [] };
-    if (!r.products.find(x => x.id === p.id)) r.products.push(p);
-    reviews.set(id, r);
+    out.push({ id, name: unesc(name), ts, stars, text, img: img ? "https:" + img.replace(/^https?:/, "") : null, verified, variant });
   }
+  return out;
 }
-for (let i = 0; i < products.length; i += 2) { await Promise.all(products.slice(i, i + 2).map(scrape)); await new Promise(r => setTimeout(r, 400)); }
-console.log(`loox pages fetched ${fetched}, failed ${failed}, unique reviews ${reviews.size}, non-ok statuses ${JSON.stringify(statuses)}`);
+async function scrape(p) {
+  let html = "";
+  for (let a = 0; a < 6 && !html; a++) {
+    try { const r = await fetch(`https://loox.io/widget/${LOOX_KEY}/reviews/${p.id}`, { headers: { "User-Agent": UA, "Accept": "text/html" } });
+      if (r.ok) { html = await r.text(); break; }
+      statuses[r.status] = (statuses[r.status] || 0) + 1;
+      const ra = +(r.headers.get("retry-after") || 0); await new Promise(res => setTimeout(res, (ra ? ra * 1000 : 15000 * (a + 1))));
+    } catch (e) { statuses.err = (statuses.err || 0) + 1; await new Promise(res => setTimeout(res, 5000)); }
+  }
+  let list;
+  if (html) { fetched++; list = parse(html); cache[p.id] = { ts: Date.now(), reviews: list }; }
+  else if (cache[p.id]) { cached++; list = cache[p.id].reviews; }
+  else { failed++; return; }
+  for (const it of list) { const r = reviews.get(it.id) || { ...it, products: [] }; if (!r.products.find(x => x.id === p.id)) r.products.push(p); reviews.set(it.id, r); }
+}
+for (const p of products) { await scrape(p); await new Promise(r => setTimeout(r, 1200)); }
+writeFileSync(CACHE, JSON.stringify(cache));
+console.log(`loox pages fetched ${fetched}, from cache ${cached}, failed ${failed}, unique reviews ${reviews.size}, non-ok statuses ${JSON.stringify(statuses)}`);
 
 // 3. XML
 const x = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -115,8 +131,8 @@ ${items.join("\n")}
 `;
 mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(join(OUT_DIR, "product-reviews.xml"), xml);
-const summary = { built: new Date().toISOString(), products: products.length, looxPagesFetched: fetched, looxPagesFailed: failed, uniqueReviews: reviews.size, reviewsInFeed: n, skippedNoText, bytes: Buffer.byteLength(xml) };
+const summary = { built: new Date().toISOString(), products: products.length, looxPagesFetched: fetched, looxFromCache: cached, looxPagesFailed: failed, uniqueReviews: reviews.size, reviewsInFeed: n, skippedNoText, bytes: Buffer.byteLength(xml) };
 writeFileSync(join(OUT_DIR, "summary.json"), JSON.stringify(summary, null, 1));
 if (!existsSync(join(OUT_DIR, "index.html"))) writeFileSync(join(OUT_DIR, "index.html"), `<!doctype html><title>Inlinex product reviews feed</title><p>Google Product Ratings feed: <a href="product-reviews.xml">product-reviews.xml</a></p>`);
 console.log(JSON.stringify(summary));
-if (failed > products.length * 0.2 || n < 100) { console.error("feed looks incomplete - not trusting this build"); process.exit(2); }
+if (failed > products.length * 0.1 || n < 300) { console.error("feed looks incomplete - not trusting this build"); process.exit(2); }
