@@ -4,6 +4,17 @@
 <publisher><name>Inlinex</name><favicon>https://inlinexskate.com/favicon.ico</favicon></publisher>
 <reviews>
 <review>
+<review_id>RxziTfH4_</review_id>
+<reviewer><name>Riniati J.</name></reviewer>
+<review_timestamp>2026-10-20T03:35:43Z</review_timestamp>
+<content>We had a great experience purchasing ice skates there, the staff was friendly, knowledgeable and helpful. He provided many advice as we are total beginners. My daughter has started using the ice skates and was extremely happy.</content>
+<review_url type="singleton">https://inlinexskate.com/products/playlife-classic-black-ice-skates#looxReviews</review_url>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><gtins><gtin>4040333517123</gtin><gtin>4040333517130</gtin><gtin>4040333517147</gtin><gtin>4040333517154</gtin><gtin>4040333517161</gtin><gtin>4040333517178</gtin><gtin>4040333572115</gtin><gtin>4040333572122</gtin><gtin>4040333572139</gtin></gtins><brands><brand>Playlife</brand></brands></product_ids><product_name>Playlife Classic Black Ice Skates</product_name><product_url>https://inlinexskate.com/products/playlife-classic-black-ice-skates</product_url></product><product><product_ids><gtins><gtin>4040333507537</gtin><gtin>4040333507544</gtin><gtin>4040333507551</gtin><gtin>4040333507568</gtin><gtin>4040333507575</gtin><gtin>4040333507582</gtin><gtin>4040333507599</gtin></gtins><brands><brand>Playlife</brand></brands></product_ids><product_name>Playlife Classic White Ice Skates</product_name><product_url>https://inlinexskate.com/products/playlife-classic-white-ice-skates</product_url></product></products>
+<is_spam>false</is_spam>
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
 <review_id>8zhRTlVw4</review_id>
 <reviewer><name>Dava P.</name></reviewer>
 <review_timestamp>2026-10-20T02:36:40Z</review_timestamp>
@@ -11,6 +22,17 @@
 <review_url type="singleton">https://inlinexskate.com/products/flying-eagle-heron-pro-sf60-onyx-skates#looxReviews</review_url>
 <ratings><overall min="1" max="5">5</overall></ratings>
 <products><product><product_ids><gtins><gtin>6936335135220</gtin><gtin>6936335135237</gtin><gtin>6936335135244</gtin><gtin>6936335135251</gtin><gtin>6936335135268</gtin></gtins><brands><brand>Flying Eagle</brand></brands></product_ids><product_name>Flying Eagle Heron Pro SF60 Onyx Skates</product_name><product_url>https://inlinexskate.com/products/flying-eagle-heron-pro-sf60-onyx-skates</product_url></product></products>
+<is_spam>false</is_spam>
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
+<review_id>8AFDrv8fn</review_id>
+<reviewer><name>Kevin C.</name></reviewer>
+<review_timestamp>2026-10-20T00:12:26Z</review_timestamp>
+<content>Everything was smooth!</content>
+<review_url type="singleton">https://inlinexskate.com/products/usd-aeon-60-nicoly-pro-aggressive-skate#looxReviews</review_url>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><gtins><gtin>4040333608982</gtin><gtin>4040333608999</gtin><gtin>4040333609002</gtin><gtin>4040333609019</gtin><gtin>4040333609026</gtin></gtins><brands><brand>USD</brand></brands></product_ids><product_name>USD Aeon 60 Nicoly Pro Aggressive Skate</product_name><product_url>https://inlinexskate.com/products/usd-aeon-60-nicoly-pro-aggressive-skate</product_url></product></products>
 <is_spam>false</is_spam>
 <collection_method>post_fulfillment</collection_method>
 </review>
