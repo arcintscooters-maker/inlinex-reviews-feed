@@ -1773,7 +1773,7 @@ Helpful with all my questions and finding right skate when they didn’t have my
 Great fit!</content>
 <review_url type="singleton">https://inlinexskate.com/products/rollerblade-rb-80-women-skates#looxReviews</review_url>
 <ratings><overall min="1" max="5">5</overall></ratings>
-<products><product><product_ids><gtins><gtin>8050032032441</gtin><gtin>8050032032458</gtin><gtin>8050032032465</gtin><gtin>8050032032472</gtin></gtins><brands><brand>Rollerblade</brand></brands></product_ids><product_name>Rollerblade RB 80 Women Skates</product_name><product_url>https://inlinexskate.com/products/rollerblade-rb-80-women-skates</product_url></product></products>
+<products><product><product_ids><gtins><gtin>8050032032434</gtin><gtin>8050032032441</gtin><gtin>8050032032458</gtin><gtin>8050032032465</gtin><gtin>8050032032472</gtin><gtin>8050032032489</gtin></gtins><brands><brand>Rollerblade</brand></brands></product_ids><product_name>Rollerblade RB 80 Women Skates</product_name><product_url>https://inlinexskate.com/products/rollerblade-rb-80-women-skates</product_url></product></products>
 <is_spam>false</is_spam>
 <collection_method>post_fulfillment</collection_method>
 </review>
@@ -6266,17 +6266,6 @@ Really great value to upgrade your FRs</content>
 <collection_method>post_fulfillment</collection_method>
 </review>
 <review>
-<review_id>cDh1mIMoi</review_id>
-<reviewer><name>Jed N.</name></reviewer>
-<review_timestamp>2025-10-30T06:50:38Z</review_timestamp>
-<content>I wasn’t expecting this part replacement but thank you inlinex for your service initiative. You have done all to ensure my skating experience is safe and reliable.</content>
-<review_url type="singleton">https://inlinexskate.com/products/bucklereplacement#looxReviews</review_url>
-<ratings><overall min="1" max="5">5</overall></ratings>
-<products><product><product_ids><mpns><mpn>0000000000182</mpn><mpn>0000000000183</mpn></mpns><brands><brand>Inline skate</brand></brands></product_ids><product_name>Buckle Replacement Service</product_name><product_url>https://inlinexskate.com/products/bucklereplacement</product_url></product></products>
-<is_spam>false</is_spam>
-<collection_method>post_fulfillment</collection_method>
-</review>
-<review>
 <review_id>puVY6hjtU</review_id>
 <reviewer><name>Jed N.</name></reviewer>
 <review_timestamp>2025-10-30T06:47:49Z</review_timestamp>
@@ -8678,17 +8667,6 @@ So I decided to remove my liner and notice immediately, there was a lot of space
 <review_url type="singleton">https://inlinexskate.com/products/undercover-carlos-bernal-movie-60mm-wheels#looxReviews</review_url>
 <ratings><overall min="1" max="5">5</overall></ratings>
 <products><product><product_ids><gtins><gtin>4040333579091</gtin></gtins><brands><brand>Undercover</brand></brands></product_ids><product_name>Undercover Carlos Bernal Movie 60mm/90A Wheels (Pack of 4)</product_name><product_url>https://inlinexskate.com/products/undercover-carlos-bernal-movie-60mm-wheels</product_url></product></products>
-<is_spam>false</is_spam>
-<collection_method>post_fulfillment</collection_method>
-</review>
-<review>
-<review_id>MI3Q1oWVe</review_id>
-<reviewer><name>Luke C.</name></reviewer>
-<review_timestamp>2024-10-15T00:20:59Z</review_timestamp>
-<content>Coach Joseph has taught me how to skate in 4 lessons. His simple way of explanation makes it easy to learn skating. I now skate for cardio workout every week. Thank you!</content>
-<review_url type="singleton">https://inlinexskate.com/products/inline-skating-lesson#looxReviews</review_url>
-<ratings><overall min="1" max="5">5</overall></ratings>
-<products><product><product_ids><brands><brand>Inlinex</brand></brands></product_ids><product_name>Inline Skating Lessons@Punggol</product_name><product_url>https://inlinexskate.com/products/inline-skating-lesson</product_url></product></products>
 <is_spam>false</is_spam>
 <collection_method>post_fulfillment</collection_method>
 </review>
