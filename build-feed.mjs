@@ -29,7 +29,6 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SHOP = "inline-skate.myshopify.com";
 const STORE = "https://inlinexskate.com";
-const LOOX_KEY = "UEf-LnQ_ui";
 const OUT_DIR = join(HERE, "docs");
 
 if (!process.env.SHOPIFY_CLIENT_ID) {                       // local run: borrow the admin app's .env
@@ -42,55 +41,32 @@ if (!CID || !CSEC) { console.error("SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET mi
 const tk = await (await fetch(`https://${SHOP}/admin/oauth/access_token`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ client_id: CID, client_secret: CSEC, grant_type: "client_credentials" }) })).json();
 const gql = async (q, v) => { for (let a = 0; a < 8; a++) { const r = await (await fetch(`https://${SHOP}/admin/api/2026-04/graphql.json`, { method: "POST", headers: { "X-Shopify-Access-Token": tk.access_token, "Content-Type": "application/json" }, body: JSON.stringify({ query: q, variables: v }) })).json(); if (r.errors && JSON.stringify(r.errors).includes("THROTTLED")) { await new Promise(r => setTimeout(r, 2000)); continue; } if (r.errors) throw new Error(JSON.stringify(r.errors).slice(0, 300)); return r.data; } };
 
-// 1. products with reviews
-const products = []; let cursor = null;
+// 1-2. Reviews come from OUR store now (Shopify metaobjects type "ix_review", repo arcintscooters-maker/inlinex-reviews), not
+// from scraping Loox (dropped 1 Nov 2026). Published reviews only. A review maps to its product plus the other colourways in its
+// group (groups.json fetched from the private repo is not reachable here, so the group list is read from the products' own
+// inlinex.reviews JSON: a review handle that appears on several products belongs to all of them).
+const gs1ok = b => { if (!/^d{8}$|^d{12,14}$/.test(b)) return false; const d = b.split("").map(Number); const chk = d.pop(); let s = 0; d.reverse().forEach((x, i) => s += x * (i % 2 === 0 ? 3 : 1)); return (10 - s % 10) % 10 === chk; };
+const products = new Map(); let cursor = null;
 for (;;) {
-  const d = await gql(`query($c:String){ products(first:100, after:$c, query:"status:active"){ pageInfo{hasNextPage endCursor} nodes{ id title handle vendor onlineStoreUrl rc: metafield(namespace:"reviews", key:"rating_count"){value} variants(first:60){nodes{ sku barcode title }} } } }`, { c: cursor });
-  for (const p of d.products.nodes) if (+(p.rc?.value || 0) > 0 && p.onlineStoreUrl) products.push({ id: p.id.split("/").pop(), title: p.title.replace(/[\u{1F300}-\u{1FAFF}☀-➿]/gu, "").trim(), handle: p.handle, vendor: p.vendor, variants: p.variants.nodes });
+  const d = await gql(`query($c:String){ products(first:100, after:$c, query:"status:active"){ pageInfo{hasNextPage endCursor} nodes{ id title handle vendor onlineStoreUrl rv: metafield(namespace:"inlinex", key:"reviews"){value} variants(first:60){nodes{ sku barcode title }} } } }`, { c: cursor });
+  for (const p of d.products.nodes) { if (!p.onlineStoreUrl || !p.rv) continue; let j; try { j = JSON.parse(p.rv.value); } catch { continue; } if (!j.count) continue;
+    products.set(p.id.split("/").pop(), { id: p.id.split("/").pop(), title: p.title.replace(/[🌀-🫿☀-➿]/gu, "").trim(), handle: p.handle, vendor: p.vendor, variants: p.variants.nodes, handles: new Set(j.items.map(i => i.id)) }); }
   if (!d.products.pageInfo.hasNextPage) break; cursor = d.products.pageInfo.endCursor;
 }
-console.log(`products with reviews: ${products.length}`);
-
-// 2. Loox widget pages
-const gs1ok = b => { if (!/^\d{8}$|^\d{12,14}$/.test(b)) return false; const d = b.split("").map(Number); const chk = d.pop(); let s = 0; d.reverse().forEach((x, i) => s += x * (i % 2 === 0 ? 3 : 1)); return (10 - s % 10) % 10 === chk; };
-const unesc = s => s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").trim();
-const reviews = new Map(); let fetched = 0, failed = 0, cached = 0; const statuses = {};
-// Loox answers 429 generously: one request at a time, ~1.2 s apart, honour Retry-After, and keep the last good copy of every
-// product's reviews in docs/loox-cache.json so a refused fetch reuses yesterday's data instead of dropping the product.
-const CACHE = join(OUT_DIR, "loox-cache.json"); mkdirSync(OUT_DIR, { recursive: true });
-const cache = existsSync(CACHE) ? JSON.parse(readFileSync(CACHE, "utf8")) : {};
-const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
-function parse(html) {
-  const out = []; const parts = html.split(/<div data-id="([A-Za-z0-9_-]+)" data-media-type="([a-z]*)" class="grid-item-wrap/);
-  for (let k = 1; k < parts.length - 1; k += 3) {
-    const id = parts[k], block = parts[k + 2];
-    const name = (block.match(/class="title">([^<]*)/) || [])[1]; const ts = +(block.match(/data-time='(\d+)'/) || [])[1];
-    const stars = +(block.match(/Rating icons:\s+(\d) \/ 5/) || [])[1]; const text = unesc((block.match(/class="main-text">([\s\S]*?)<\/div>/) || [, ""])[1]);
-    const img = (block.match(/<img src="([^"]+)"/) || [])[1]; const verified = /verified-badge-and-text/.test(block);
-    const variant = (block.match(/item-type-value">([^<]*)/) || [])[1];
-    if (!id || !name || !ts || !(stars >= 1 && stars <= 5)) continue;
-    out.push({ id, name: unesc(name), ts, stars, text, img: img ? "https:" + img.replace(/^https?:/, "") : null, verified, variant });
-  }
-  return out;
+const reviews = new Map(); cursor = null;
+for (;;) {
+  const d = await gql(`query($c:String){ metaobjects(type:"ix_review", first:250, after:$c){ pageInfo{hasNextPage endCursor} nodes{ handle fields{ key value references(first:8){ nodes{ ... on MediaImage{ image{ url } } } } } } } }`, { c: cursor });
+  for (const n of d.metaobjects.nodes) { const f = Object.fromEntries(n.fields.map(x => [x.key, x])); if ((f.status?.value || "published") !== "published") continue;
+    const pid = String(f.product?.value || "").split("/").pop();
+    reviews.set(n.handle, { id: n.handle, name: f.author?.value || "Verified buyer", ts: Date.parse(f.submitted_at?.value || 0), stars: +f.rating?.value, text: f.body?.value || "",
+      imgs: (f.photos?.references?.nodes || []).map(x => x?.image?.url).filter(Boolean), incentivized: f.incentivized?.value === "true", pid, products: [] }); }
+  if (!d.metaobjects.pageInfo.hasNextPage) break; cursor = d.metaobjects.pageInfo.endCursor;
 }
-async function scrape(p) {
-  let html = "";
-  for (let a = 0; a < 6 && !html; a++) {
-    try { const r = await fetch(`https://loox.io/widget/${LOOX_KEY}/reviews/${p.id}`, { headers: { "User-Agent": UA, "Accept": "text/html" } });
-      if (r.ok) { html = await r.text(); break; }
-      statuses[r.status] = (statuses[r.status] || 0) + 1;
-      const ra = +(r.headers.get("retry-after") || 0); await new Promise(res => setTimeout(res, (ra ? ra * 1000 : 15000 * (a + 1))));
-    } catch (e) { statuses.err = (statuses.err || 0) + 1; await new Promise(res => setTimeout(res, 5000)); }
-  }
-  let list;
-  if (html) { fetched++; list = parse(html); cache[p.id] = { ts: Date.now(), reviews: list }; }
-  else if (cache[p.id]) { cached++; list = cache[p.id].reviews; }
-  else { failed++; return; }
-  for (const it of list) { const r = reviews.get(it.id) || { ...it, products: [] }; if (!r.products.find(x => x.id === p.id)) r.products.push(p); reviews.set(it.id, r); }
-}
-for (const p of products) { await scrape(p); await new Promise(r => setTimeout(r, 1200)); }
-writeFileSync(CACHE, JSON.stringify(cache));
-console.log(`loox pages fetched ${fetched}, from cache ${cached}, failed ${failed}, unique reviews ${reviews.size}, non-ok statuses ${JSON.stringify(statuses)}`);
+for (const p of products.values()) for (const h of p.handles) { const r = reviews.get(h); if (r && !r.products.find(x => x.id === p.id)) r.products.push(p); }
+for (const r of reviews.values()) r.products.sort((a, b) => (b.id === r.pid) - (a.id === r.pid));   // the reviewed product first
+for (const [k, r] of reviews) if (!r.products.length || !(r.stars >= 1 && r.stars <= 5)) reviews.delete(k);   // product inactive / gone
+console.log(`products with reviews: ${products.size}; published reviews on active products: ${reviews.size}`);
+const fetched = 0, cached = 0, failed = 0;
 
 // 3. XML
 const x = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -112,10 +88,11 @@ for (const r of [...reviews.values()].sort((a, b) => b.ts - a.ts)) {
 <reviewer><name>${x(r.name)}</name></reviewer>
 <review_timestamp>${new Date(r.ts).toISOString().replace(/\.\d{3}Z$/, "Z")}</review_timestamp>
 <content>${x(r.text)}</content>
-<review_url type="singleton">${x(`${STORE}/products/${main.handle}#looxReviews`)}</review_url>
-${r.img ? `<reviewer_images><reviewer_image><url>${x(r.img)}</url></reviewer_image></reviewer_images>\n` : ""}<ratings><overall min="1" max="5">${r.stars}</overall></ratings>
+<review_url type="singleton">${x(`${STORE}/products/${main.handle}#ix-reviews`)}</review_url>
+${r.imgs.length ? `<reviewer_images>${r.imgs.slice(0, 4).map(u => `<reviewer_image><url>${x(u)}</url></reviewer_image>`).join("")}</reviewer_images>\n` : ""}<ratings><overall min="1" max="5">${r.stars}</overall></ratings>
 <products>${r.products.map(p => `<product>${idsFor(p)}<product_name>${x(p.title)}</product_name><product_url>${x(`${STORE}/products/${p.handle}`)}</product_url></product>`).join("")}</products>
 <is_spam>false</is_spam>
+${r.incentivized ? "<is_incentivized_review>true</is_incentivized_review>\n" : ""}
 <collection_method>post_fulfillment</collection_method>
 </review>`);
   n++;
@@ -131,8 +108,8 @@ ${items.join("\n")}
 `;
 mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(join(OUT_DIR, "product-reviews.xml"), xml);
-const summary = { built: new Date().toISOString(), products: products.length, looxPagesFetched: fetched, looxFromCache: cached, looxPagesFailed: failed, uniqueReviews: reviews.size, reviewsInFeed: n, skippedNoText, bytes: Buffer.byteLength(xml) };
+const summary = { built: new Date().toISOString(), source: "ix_review metaobjects", products: products.size, uniqueReviews: reviews.size, reviewsInFeed: n, skippedNoText, bytes: Buffer.byteLength(xml) };
 writeFileSync(join(OUT_DIR, "summary.json"), JSON.stringify(summary, null, 1));
 if (!existsSync(join(OUT_DIR, "index.html"))) writeFileSync(join(OUT_DIR, "index.html"), `<!doctype html><title>Inlinex product reviews feed</title><p>Google Product Ratings feed: <a href="product-reviews.xml">product-reviews.xml</a></p>`);
 console.log(JSON.stringify(summary));
-if (failed > products.length * 0.1 || n < 300) { console.error("feed looks incomplete - not trusting this build"); process.exit(2); }
+if (n < 300) { console.error("feed looks incomplete - not trusting this build"); process.exit(2); }
