@@ -4,6 +4,44 @@
 <publisher><name>Inlinex</name><favicon>https://inlinexskate.com/favicon.ico</favicon></publisher>
 <reviews>
 <review>
+<review_id>ix-9d3e02c358b3</review_id>
+<reviewer><name>Dava P.</name></reviewer>
+<review_timestamp>2026-11-09T20:42:43Z</review_timestamp>
+<content>great boot. Luke took great care in helping rebuild an old 5-wheel inline speed skate along with another 4-wheel speed skate. this Flying Eagle boot fit perfect and is very well made. InlineX is a go to for me.</content>
+<review_url type="singleton">https://inlinexskate.com/products/rollerblade-crossfire-boot-only#ix-reviews</review_url>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><mpns><mpn>8050032009320</mpn><mpn>8050032009337</mpn><mpn>8050032009344</mpn><mpn>8050032009351</mpn><mpn>8050032009368</mpn><mpn>8050032009375</mpn><mpn>8050032009382</mpn><mpn>8050032009399</mpn><mpn>8050032009405</mpn><mpn>8050032009412</mpn><mpn>8050032009429</mpn></mpns><brands><brand>Rollerblade</brand></brands></product_ids><product_name>Rollerblade Crossfire Boot Only</product_name><product_url>https://inlinexskate.com/products/rollerblade-crossfire-boot-only</product_url></product></products>
+<is_spam>false</is_spam>
+
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
+<review_id>ix-ef79f633b3e4</review_id>
+<reviewer><name>Dava P.</name></reviewer>
+<review_timestamp>2026-11-09T20:42:42Z</review_timestamp>
+<content>great liner. Luke took great care in helping rebuild an old 5-wheel inline speed skate along with another 4-wheel speed skate. these liners fit perfect and seem well made. InlineX is a go to for me.</content>
+<review_url type="singleton">https://inlinexskate.com/products/powerslidemyfit2ndskindualfitliners#ix-reviews</review_url>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><mpns><mpn>4040333483992</mpn><mpn>4040333483947</mpn><mpn>4040333483954</mpn><mpn>4040333483961</mpn><mpn>4040333483978</mpn><mpn>4040333483985</mpn></mpns><brands><brand>MyFit</brand></brands></product_ids><product_name>MyFit 2nd Skin Dual Fit Liners</product_name><product_url>https://inlinexskate.com/products/powerslidemyfit2ndskindualfitliners</product_url></product></products>
+<is_spam>false</is_spam>
+
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
+<review_id>ix-31332a052bd8</review_id>
+<reviewer><name>Jatt A.</name></reviewer>
+<review_timestamp>2026-11-09T12:49:15Z</review_timestamp>
+<content>Perfect fit for me with the Zero liner. Smooth wheels and bearings.</content>
+<review_url type="singleton">https://inlinexskate.com/products/flying-eagle-heron-pro-sf60-onyx-skates#ix-reviews</review_url>
+<reviewer_images><reviewer_image><url>https://cdn.shopify.com/s/files/1/0439/2773/files/review-fc5971d2c89175c9.jpg?v=1794228543</url></reviewer_image></reviewer_images>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><mpns><mpn>6936335135220</mpn><mpn>6936335135237</mpn><mpn>6936335135244</mpn><mpn>6936335135251</mpn><mpn>6936335135268</mpn></mpns><brands><brand>Flying Eagle</brand></brands></product_ids><product_name>Flying Eagle Heron Pro SF60 Onyx Skates</product_name><product_url>https://inlinexskate.com/products/flying-eagle-heron-pro-sf60-onyx-skates</product_url></product></products>
+<is_spam>false</is_spam>
+<is_incentivized_review>true</is_incentivized_review>
+
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
 <review_id>ix-a91bfa7b62f6</review_id>
 <reviewer><name>Moises C.</name></reviewer>
 <review_timestamp>2026-11-08T18:51:36Z</review_timestamp>
