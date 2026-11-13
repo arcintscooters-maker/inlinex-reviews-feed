@@ -1,9 +1,9 @@
 {
- "built": "2026-11-12T23:48:24.220Z",
+ "built": "2026-11-13T23:47:26.883Z",
  "source": "ix_review metaobjects",
- "products": 521,
- "uniqueReviews": 836,
+ "products": 520,
+ "uniqueReviews": 838,
  "reviewsInFeed": 830,
- "skippedNoText": 6,
- "bytes": 942255
+ "skippedNoText": 8,
+ "bytes": 944137
 }
