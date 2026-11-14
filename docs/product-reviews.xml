@@ -4,6 +4,32 @@
 <publisher><name>Inlinex</name><favicon>https://inlinexskate.com/favicon.ico</favicon></publisher>
 <reviews>
 <review>
+<review_id>ix-d7e593203f51</review_id>
+<reviewer><name>Cindy</name></reviewer>
+<review_timestamp>2026-11-14T15:11:57Z</review_timestamp>
+<content>Absolutely in love with my new skates! 😍 They’re incredibly smooth, comfortable, and fit perfectly! Just a heads-up: they run small, so I highly recommend going one full size up from your regular shoe size. Other than that, they’re AMAZING! I fall more in love with them every time I skate! ❤️</content>
+<review_url type="singleton">https://inlinexskate.com/products/rollerblade-lightning-90-women-skates#ix-reviews</review_url>
+<reviewer_images><reviewer_image><url>https://cdn.shopify.com/s/files/1/0439/2773/files/review-b36f3675dc75fc9b.jpg?v=1794668937</url></reviewer_image></reviewer_images>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><mpns><mpn>8050459975079</mpn><mpn>8050459975086</mpn><mpn>8050459975093</mpn><mpn>8050459975109</mpn></mpns><brands><brand>Rollerblade</brand></brands></product_ids><product_name>Rollerblade Lightning 90 Women Skates</product_name><product_url>https://inlinexskate.com/products/rollerblade-lightning-90-women-skates</product_url></product></products>
+<is_spam>false</is_spam>
+<is_incentivized_review>true</is_incentivized_review>
+
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
+<review_id>ix-d23a513b26e5</review_id>
+<reviewer><name>Cindy</name></reviewer>
+<review_timestamp>2026-11-14T15:11:57Z</review_timestamp>
+<content>I love this! My skates won’t dirty my clothes in my bag. Thank you!</content>
+<review_url type="singleton">https://inlinexskate.com/products/black-wheel-cover#ix-reviews</review_url>
+<ratings><overall min="1" max="5">5</overall></ratings>
+<products><product><product_ids><mpns><mpn>5593051</mpn></mpns><brands><brand>Sixy</brand></brands></product_ids><product_name>Black Wheel Cover</product_name><product_url>https://inlinexskate.com/products/black-wheel-cover</product_url></product></products>
+<is_spam>false</is_spam>
+
+<collection_method>post_fulfillment</collection_method>
+</review>
+<review>
 <review_id>ix-c3b6e997f814</review_id>
 <reviewer><name>a t</name></reviewer>
 <review_timestamp>2026-11-13T09:15:57Z</review_timestamp>
